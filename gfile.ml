@@ -72,3 +72,23 @@ let from_file path =
   close_in infile ;
   final_graph
   
+
+
+let export path graph =
+  (* Open a write-file. *)
+  let ff = open_out path in
+
+  (* Declare the graph. *)
+  fprintf ff "digraph G {\n" ;
+
+  (* Force display from left to right *)
+  fprintf ff "rankdir=LR;\n" ;
+
+  (* Write all arcs *)
+  v_iter graph (fun id out -> List.iter (fun (id2, lbl) -> fprintf ff "%s -> %s [ label = \"%s\" ];\n" id id2 lbl) out) ;
+  
+  (* End of file *)
+  fprintf ff "}\n" ;
+  
+  close_out ff ;
+  ()

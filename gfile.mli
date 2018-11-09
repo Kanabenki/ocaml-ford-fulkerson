@@ -12,3 +12,5 @@ val from_file: path -> string graph
  * Use Graph.map if necessary to prepare the input graph. *)
 val write_file: path -> string graph -> unit
 
+(* Export a dot file from a given graph *)
+val export: path -> string graph -> unit
