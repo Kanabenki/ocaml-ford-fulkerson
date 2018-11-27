@@ -40,6 +40,7 @@ val out_arcs: 'a graph -> id -> 'a out_arcs
 * @raise Graph_error if id1 is unknown. *)
 val find_arc: 'a graph -> id -> id -> 'a option
 
+val get_nodes_list: 'a graph -> id list
 
 (**************  COMBINATORS, ITERATORS  **************)
 

@@ -1,4 +1,5 @@
 open Graph
+open FordFulkerson
 
 let () =
 
@@ -20,9 +21,11 @@ let () =
   let graph = Gfile.from_file infile in
 
   (* Rewrite the graph that has been read then export a dot file for Graphviz. *)
-  let () = 
-  Gfile.write_file outfile graph;
-  Gfile.export (outfile^".gv") graph;
+  let () =
+  let out_graph = (Graph.map (FordFulkerson.build_gap_graph (FordFulkerson.init_flow_graph (Graph.map graph int_of_string))) string_of_int)
+  in
+  Gfile.write_file outfile out_graph;
+  Gfile.export (outfile^".gv") out_graph;
   in
 
   ()

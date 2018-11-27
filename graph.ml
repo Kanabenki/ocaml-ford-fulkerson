@@ -43,4 +43,6 @@ let v_fold gr f acu = List.fold_left (fun acu (id, out) -> f acu id out) acu gr
 
 let map gr f = List.map (fun (id, out) -> (id, List.map (fun (ida, label) -> (ida, f label)) out)) gr
 
+let get_nodes_list graph = List.map (fun (id, arcs) -> id) graph
+
 
