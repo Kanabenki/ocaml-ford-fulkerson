@@ -18,37 +18,84 @@ type path = id list
  *  forbidden is a list of forbidden nodes (they have already been visited)
  *
  *  find_path : int graph -> id list -> id -> id -> path option
+ *  
+ *  Must be used like this at initialization :
+ *  >>> find_path residual [] source dest
  *
- *)
+*)
+
+
 
 let rec find_path residual forbidden id1 id2 =
-    
-    (* Loop on every arc of id1 *)
-    let rec loop_on_arcs residual forbidden id1 id2 out_arcs_id1 =
 
-    (* Boucler sur les arcs du node en cours d'étude : fonction à part? *)
+  (* Loop on every arc of id1 *)
+  let rec loop_on_arcs residual forbidden id1 id2 out_arcs_id1 =
+
+    (* Loop on every arcs starting from the current node *)
     match out_arcs_id1 with
-        | [] -> None
-        | (id_next, cost) :: tail_list -> if (cost > 0 && !(List.mem id_next forbidden))
+      | [] -> None (* Each arc has been tested : no path founded *)
+      | (id_next, cost) :: tail_list -> if (cost > 0 && not (List.mem id_next forbidden))
 
-                                                (* Si le chemin est viable et que le noeud n'a pas déjà été franchi *)
-                                                then 
+          (* If we can get to the next node ... *)
+          then 
 
-                                                    if (id_next = id2)
+            if (id_next = id2)
 
-                                                        (* On termine le chemin si on a atteint la destination *)
-                                                        then Some (id2 :: forbidden)
+            (* ... we return the path if we reach the destination node  *)
+            then Some (List.rev (id2 :: forbidden))
 
-                                                        (* On travaille sur le noeud suivant si ce n'est pas la destination
-                                                            ... mais on oublie pas de retenir le noeud qu'on vient de quitter *)
-                                                        else find_path residual (id1 :: forbidden) id_next id2
+            (* ... if it is not the destination node, we work on the next node 
+             * and we save the node we're leaving in the forbidden list
+             *
+             * WARNING : if we do not find a path with this node, we must test the other arcs!*)
+            else 
+              let next = find_path residual (id1 :: forbidden) id_next id2
+              in
+                match next with
+                  | None -> loop_on_arcs residual forbidden id1 id2 tail_list
+                  | _ -> next
 
-                                                else 
-                                                    (* boucler sur le reste des arcs *)
-                                                    loop_on_arcs residual forbidden id1 id2 tail_list
+          else 
+            (* boucler sur le reste des arcs *)
+            loop_on_arcs residual forbidden id1 id2 tail_list
 
-    in 
-    
-    let out_arcs_of_id1 = out_arcs residual id1 in
+  in 
+
+  let out_arcs_of_id1 = out_arcs residual id1 in
 
     loop_on_arcs residual forbidden id1 id2 out_arcs_of_id1
+
+
+
+
+(* Evaluate the augmenting value according to the given residual network and augmenting path.
+ *
+ *
+ * (We should check that find_arc gr id1 id2 only returns an arc FROM id1 TO id2
+ *  and not an arc from id2 to id1 for whatever reason)
+*)
+let eval_augmenting_value residual path =
+
+  (* Iterations *)
+  (* We stop iterating when we checked the entire path and return the min_value.
+   * Otherwise, we evaluate the possible new min_value with the following node in the path. *)
+  let rec eval_aug_value flow_graph path min_val id1 = 
+    match path with
+      | [] -> min_val
+      | id2 :: tl_list -> 
+
+          (* Getting the arc from id1 to id2 *)
+          let label = find_arc residual id1 id2 in
+
+            (* We save its label if it is lower than the old min_value *)
+            if (label < min_val) 
+            then eval_aug_value flow_graph tl_list label id2
+            else eval_aug_value flow_graph tl_list min_val id2
+
+  in
+
+    (* Initialization : we save the first node, set the min_value at 999999,
+     * then start iterating *)
+    match path with 
+      | [] -> 0
+      | id :: tl_list -> eval_aug_value residual tl_list 999999 id
