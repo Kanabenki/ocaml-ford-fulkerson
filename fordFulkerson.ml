@@ -101,10 +101,16 @@ let eval_augmenting_value residual path =
           (* Getting the arc from id1 to id2 *)
           let label = find_arc residual id1 id2 in
 
-            (* We save its label if it is lower than the old min_value *)
-            if (label < min_val) 
-            then eval_aug_value flow_graph tl_list label id2
-            else eval_aug_value flow_graph tl_list min_val id2
+			(* Decapsulate the value in label :
+				if this label is None, an error is raised *)
+			match label with
+				| None -> raise Not_found
+				| Some value -> 
+
+		        (* We save its label if it is lower than the old min_value *)
+		        if (value < min_val) 
+		        then eval_aug_value flow_graph tl_list value id2
+		        else eval_aug_value flow_graph tl_list min_val id2
 
   in
 
