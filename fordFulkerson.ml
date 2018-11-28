@@ -117,5 +117,6 @@ let eval_augmenting_value residual path =
     (* Initialization : we save the first node, set the min_value at 999999,
      * then start iterating *)
     match path with 
-      | [] -> 0
-      | id :: tl_list -> eval_aug_value residual tl_list 999999 id
+      | None -> 0
+      | Some [] -> 0
+      | Some (id :: tl_list) -> eval_aug_value residual tl_list 999999 id
