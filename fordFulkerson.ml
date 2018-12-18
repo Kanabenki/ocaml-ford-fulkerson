@@ -117,6 +117,27 @@ let eval_augmenting_value residual path =
     (* Initialization : we save the first node, set the min_value at 999999,
      * then start iterating *)
     match path with 
-      | None -> 0
-      | Some [] -> 0
-      | Some (id :: tl_list) -> eval_aug_value residual tl_list 999999 id
+      | [] -> 0
+      | id :: tl_list -> eval_aug_value residual tl_list (Int32.to_int Int32.max_int) id
+
+
+let rec augment_flow_graph graph path value =match path with
+ | id_s :: id_e :: rest -> (match Graph.find_arc graph id_s id_e with
+    | Some flow -> Graph.add_arc graph id_s id_e {capacity=flow.capacity; flow=flow.flow + value}
+    | None -> (match Graph.find_arc graph id_s id_e with
+        | Some flow -> graph
+        | None -> raise (Graph.Graph_error "Part of path missing in graph")))
+  | _ :: [] ->  raise (Graph.Graph_error "Only one node in path")
+  | [] -> graph
+
+let run_ff graph id_start id_end =
+  let rec loop graph =
+    let gap_graph = build_gap_graph graph
+    in
+    match find_path gap_graph [] id_start id_end with
+      | Some path -> let augm_value = eval_augmenting_value gap_graph path
+          in
+          if augm_value > 0 then loop (augment_flow_graph graph path augm_value) else graph
+      | None -> graph
+  in
+  loop graph

@@ -5,7 +5,7 @@ val string_of_flow_arc : flow_arc -> string
 
 (* Take a graph, a source node, a destination node
  * then return the corresponding graph with the maximum flow *)
-(* val run_ff : flow_arc graph -> id -> id -> flow_arc graph *)
+val run_ff : flow_arc graph -> id -> id -> flow_arc graph
 
 val init_flow_graph : int graph -> flow_arc graph
 
