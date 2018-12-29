@@ -22,7 +22,7 @@ let () =
 
   (* Rewrite the graph that has been read then export a dot file for Graphviz. *)
   let () =
-  let out_graph = (Graph.map (FordFulkerson.build_gap_graph (FordFulkerson.init_flow_graph (Graph.map graph int_of_string))) string_of_int)
+  let out_graph = Graph.map (FordFulkerson.run_ff (FordFulkerson.init_flow_graph (Graph.map graph int_of_string)) (string_of_int 0) (string_of_int 5)) FordFulkerson.string_of_flow_arc
   in
   Gfile.write_file outfile out_graph;
   Gfile.export (outfile^".gv") out_graph;

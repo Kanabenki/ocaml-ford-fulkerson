@@ -12,4 +12,4 @@ val init_flow_graph : int graph -> flow_arc graph
 val build_gap_graph : flow_arc graph -> int graph
 
 (* Take a graph and its origin then return the maximum flow *)
-val calc_max_flow : flow_arc graph -> id -> int
+val calc_max_flow : id -> flow_arc graph -> int
