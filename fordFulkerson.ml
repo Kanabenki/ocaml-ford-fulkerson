@@ -56,7 +56,7 @@ let rec find_path residual forbidden id1 id2 =
             if (id_next = id2)
 
             (* ... we return the path if we reach the destination node  *)
-            then Some (List.rev (id2 :: forbidden))
+            then Some (List.rev (id2 :: (id1 :: forbidden)))
 
             (* ... if it is not the destination node, we work on the next node 
              * and we save the node we're leaving in the forbidden list
@@ -129,6 +129,17 @@ let rec augment_flow_graph graph path value =match path with
         | None -> raise (Graph.Graph_error "Part of path missing in graph")))
   | _ :: [] ->  raise (Graph.Graph_error "Only one node in path")
   | [] -> graph
+
+  
+
+
+(* DEBUG *)
+let rec debug_display_path path =
+  match path with
+    | [] -> Printf.printf "\n"
+    | id :: tl_list -> Printf.printf "%s -> " id; debug_display_path tl_list
+
+
 
 let run_ff graph id_start id_end =
   let rec loop graph =
