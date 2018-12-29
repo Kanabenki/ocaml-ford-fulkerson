@@ -121,14 +121,30 @@ let eval_augmenting_value residual path =
       | id :: tl_list -> eval_aug_value residual tl_list (Int32.to_int Int32.max_int) id
 
 
-let rec augment_flow_graph graph path value =match path with
- | id_s :: id_e :: rest -> (match Graph.find_arc graph id_s id_e with
-    | Some flow -> Graph.add_arc graph id_s id_e {capacity=flow.capacity; flow=flow.flow + value}
-    | None -> (match Graph.find_arc graph id_s id_e with
-        | Some flow -> graph
-        | None -> raise (Graph.Graph_error "Part of path missing in graph")))
+let augment_flow_graph graph path value = 
+
+  let rec aux_augment_flow_graph graph path value =
+    match path with
+    | id_s :: id_e :: rest -> (match Graph.find_arc graph id_s id_e with
+      | Some flow -> aux_augment_flow_graph (Graph.add_arc graph id_s id_e {capacity=flow.capacity; flow=flow.flow + value}) (id_e :: rest) value
+      | None -> (match Graph.find_arc graph id_s id_e with
+          | Some flow -> graph
+          | None -> raise (Graph.Graph_error "Part of path missing in graph")))
+    | _ :: [] ->  graph
+    | [] -> graph
+
+  in 
+  match path with
   | _ :: [] ->  raise (Graph.Graph_error "Only one node in path")
   | [] -> graph
+  | id_s :: id_e :: rest -> aux_augment_flow_graph graph path value
+
+(*
+    The most elegant way of doing augment_flow_graph would be
+    to assume that the path is made of more than one node.
+    This way, we could avoid the use of an auxiliary function,
+    and of strange pattern matching.    
+*)
 
   
 
