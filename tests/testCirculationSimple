@@ -1,0 +1,16 @@
+# Circulation test
+
+f f1 8
+f f2 5
+
+v v1 4
+v v2 5
+v v3 3
+
+r f1 v1 5
+v f1 v2 1
+r f1 v3 2
+
+r f2 v1 2
+r f2 v2 4
+r f2 v3 2
