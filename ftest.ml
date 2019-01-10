@@ -12,9 +12,9 @@ let () =
   let infile = Sys.argv.(1)
   and outfile = Sys.argv.(4)
   
-  (* These command-line arguments are not used for the moment. *)
-  and _source = Sys.argv.(2)
-  and _sink = Sys.argv.(3)
+  (* The source and sink node for the flow graph. *)
+  and source = Sys.argv.(2)
+  and sink = Sys.argv.(3)
   in
 
   (* Open file *)
@@ -22,7 +22,7 @@ let () =
 
   (* Rewrite the graph that has been read then export a dot file for Graphviz. *)
   let () =
-  let out_graph = Graph.map (FordFulkerson.run_ff (FordFulkerson.init_flow_graph (Graph.map graph int_of_string)) (string_of_int 0) (string_of_int 5)) FordFulkerson.string_of_flow_arc
+  let out_graph = Graph.map (FordFulkerson.run_ff (FordFulkerson.init_flow_graph (Graph.map graph int_of_string)) source sink) FordFulkerson.string_of_flow_arc
   in
   Gfile.write_file outfile out_graph;
   Gfile.export (outfile^".gv") out_graph;
