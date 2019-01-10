@@ -68,11 +68,22 @@ let from_roads_file path =
   
   close_in infile ;
   final_graph
-  
+
+let check_solution graph =
+  let rec loop nodes = match nodes with
+    | id :: rest -> (match find_arc graph id "t" with
+      (* We use parsing to avoid rewriting things in the FF module *)
+      | Some s -> if Scanf.sscanf s "%d/%d" (fun a b -> a = b) then loop rest else false
+      | None -> loop rest)
+    | [] -> true
+  in
+  loop (get_nodes_list graph)
 
 let export_solution path graph =
   (* Open a write-file. *)
   let ff = open_out path in
+
+  fprintf ff (if check_solution graph then "# The solution is valid\n" else "# !!! The solution is not valid !!!\n");
 
   (* Declare the graph. *)
   fprintf ff "digraph G {\n" ;
