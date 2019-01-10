@@ -127,8 +127,8 @@ let augment_flow_graph graph path value =
     match path with
     | id_s :: id_e :: rest -> (match Graph.find_arc graph id_s id_e with
       | Some flow -> aux_augment_flow_graph (Graph.add_arc graph id_s id_e {capacity=flow.capacity; flow=flow.flow + value}) (id_e :: rest) value
-      | None -> (match Graph.find_arc graph id_s id_e with
-          | Some flow -> graph
+      | None -> (match Graph.find_arc graph id_e id_s with
+          | Some flow -> aux_augment_flow_graph (Graph.add_arc graph id_e id_s {capacity=flow.capacity; flow=flow.flow - value}) (id_e :: rest) value
           | None -> raise (Graph.Graph_error "Part of path missing in graph")))
     | _ :: [] ->  graph
     | [] -> graph
