@@ -25,7 +25,7 @@ let () =
   let out_graph = Graph.map (FordFulkerson.run_ff (FordFulkerson.init_flow_graph (Graph.map graph int_of_string)) "s" "t") FordFulkerson.string_of_flow_arc
   in
   Gfile.write_file outfile out_graph;
-  Gfile.export (outfile^".gv") out_graph;
+  GfileCirculation.export_solution (outfile^".gv") out_graph;
   in
 
   ()
