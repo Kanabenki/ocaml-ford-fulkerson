@@ -1,0 +1,7 @@
+digraph G {
+rankdir=LR;
+3 -> 4 [ label = "4/4" ];
+2 -> 3 [ label = "4/12" ];
+1 -> 2 [ label = "4/8" ];
+0 -> 1 [ label = "4/10" ];
+}
