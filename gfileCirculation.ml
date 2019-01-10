@@ -73,9 +73,9 @@ let check_solution graph =
   let rec loop nodes = match nodes with
     | id :: rest -> (match find_arc graph id "t" with
       (* We use parsing to avoid rewriting things in the FF module *)
-      | Some s -> if Scanf.sscanf s "%d/%d" (fun a b -> a = b) then loop rest else false
+      | Some s -> if Scanf.sscanf s "%d/%d" (fun a b -> a = b) then loop rest else (Printf.printf "The demands are not satisfied!\n " ; false)
       | None -> loop rest)
-    | [] -> true
+    | [] -> (Printf.printf "The demands are satisfied.\n" ;  true)
   in
   loop (get_nodes_list graph)
 
